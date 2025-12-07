@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Honda Click 125 PMS</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#b91c1c" id="metaThemeColor">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1732/1732367.png">
+    
+    <!-- CHANGED: Link directly to the real manifest.json file you created -->
+    <link rel="manifest" href="manifest.json">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        input { 
+            font-size: 16px; 
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        body, div, p, span, h1, h2, h3, input, button, li {
+            transition-property: background-color, border-color, color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+    </style>
+</head>
+<body class="text-slate-800 dark:text-slate-100 min-h-screen pb-32 relative bg-slate-50 dark:bg-slate-950 selection:bg-red-200 dark:selection:bg-red-900">
+
+    <!-- Header -->
+    <div id="headerContainer" class="relative bg-red-700 h-64 rounded-b-[3rem] shadow-xl overflow-hidden pt-safe-top z-0 transition-colors duration-500">
+        <div id="headerCircle1" class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-red-600 rounded-full opacity-50 blur-3xl transition-colors duration-500"></div>
+        <div id="headerCircle2" class="absolute bottom-[10%] left-[-10%] w-48 h-48 bg-red-800 rounded-full opacity-50 blur-2xl transition-colors duration-500"></div>
+
+        <div class="relative px-6 pt-8 flex justify-between items-center text-white max-w-lg mx-auto z-10">
+            <div>
+                <h1 id="displayTitle" class="text-2xl font-bold tracking-tight">My Click 125</h1>
+                <div id="headerBadge" class="flex items-center gap-1.5 text-red-100 text-xs font-medium bg-red-800/30 px-2 py-1 rounded-full w-fit mt-1 backdrop-blur-sm transition-colors duration-500">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                    <span>Ready to Ride</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="openInstallModal()" id="headerInstallBtn" class="bg-white/20 hover:bg-white/30 text-white p-2.5 rounded-xl transition active:scale-95 backdrop-blur-md">
+                    <i class="fa-solid fa-download text-sm"></i>
+                </button>
+                <button onclick="openSettings()" class="bg-white/20 hover:bg-white/30 text-white p-2.5 rounded-xl transition active:scale-95 backdrop-blur-md">
+                    <i class="fa-solid fa-gear text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="px-5 -mt-28 relative z-10 max-w-lg mx-auto space-y-6">
+
+        <!-- Dashboard -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-slate-900/50 p-6 flex flex-col items-center border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
+            <div id="dashStrip" class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 via-red-600 to-red-500 transition-colors duration-500"></div>
+            
+            <label class="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase mb-2">Total Mileage</label>
+            
+            <div class="flex items-baseline justify-center gap-1 w-full relative">
+                <i class="fa-solid fa-gauge-high text-slate-200 dark:text-slate-700 absolute left-4 top-1/2 -translate-y-1/2 text-2xl group-hover:text-slate-300 dark:group-hover:text-slate-600 transition-colors"></i>
+                <input type="number" id="currentOdo" class="text-4xl font-bold text-center text-slate-800 dark:text-white w-full bg-transparent focus:outline-none placeholder-slate-200 dark:placeholder-slate-700 font-mono tracking-tight" placeholder="0" inputmode="numeric">
+                <span class="text-sm font-bold text-slate-400 dark:text-slate-500">km</span>
+            </div>
+            
+            <div class="mt-4 flex items-center justify-between w-full px-4 pt-4 border-t border-slate-50 dark:border-slate-800">
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500">Next Oil</div>
+                    <div class="text-xs font-bold text-slate-700 dark:text-slate-300" id="dashNextOil">-</div>
+                </div>
+                <div class="h-6 w-px bg-slate-100 dark:bg-slate-800"></div>
+                <div class="text-center cursor-pointer active:scale-95 transition" onclick="toggleHealthFilter()">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1">
+                        Health <i class="fa-solid fa-chevron-right text-[8px] opacity-50"></i>
+                    </div>
+                    <div class="text-xs font-bold text-green-600 dark:text-green-400" id="dashHealth">Good</div>
+                </div>
+                <div class="h-6 w-px bg-slate-100 dark:bg-slate-800"></div>
+                <div class="text-center">
+                    <div class="text-[10px] text-slate-400 dark:text-slate-500">Services</div>
+                    <div class="text-xs font-bold text-slate-700 dark:text-slate-300" id="dashCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div>
+            <div class="flex justify-between items-end mb-4 px-1">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white" id="gridTitle">Parts Health</h2>
+                <span class="text-[10px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider cursor-pointer" onclick="renderGrid()">Show All</span>
+            </div>
+            <div id="pmsGrid" class="grid grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <button class="w-full p-5 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition" onclick="toggleSection('checklistContent', 'checklistArrow')">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="font-bold text-slate-800 dark:text-white text-sm">Pre-Ride Check</h3>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Daily safety inspection</p>
+                    </div>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500">
+                    <i id="checklistArrow" class="fa-solid fa-chevron-right text-xs transition-transform duration-300"></i>
+                </div>
+            </button>
+            <div id="checklistContent" class="hidden bg-slate-50/50 dark:bg-slate-950/30 p-4 border-t border-slate-100 dark:border-slate-800">
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 shadow-sm cursor-pointer active:scale-95 transition select-none">
+                        <input type="checkbox" class="w-5 h-5 accent-blue-600 rounded-md">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Brakes</span>
+                    </label>
+                    <label class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 shadow-sm cursor-pointer active:scale-95 transition select-none">
+                        <input type="checkbox" class="w-5 h-5 accent-blue-600 rounded-md">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Tires</span>
+                    </label>
+                    <label class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 shadow-sm cursor-pointer active:scale-95 transition select-none">
+                        <input type="checkbox" class="w-5 h-5 accent-blue-600 rounded-md">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Lights</span>
+                    </label>
+                    <label class="bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 shadow-sm cursor-pointer active:scale-95 transition select-none">
+                        <input type="checkbox" class="w-5 h-5 accent-blue-600 rounded-md">
+                        <span class="text-xs font-semibold text-slate-600 dark:text-slate-300">Fuel/Oil</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <div class="p-5 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 dark:text-white text-sm">Service History</h3>
+                <select id="logFilter" onchange="renderLogs()" class="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border-none rounded-lg py-1.5 pl-3 pr-8 focus:ring-0 cursor-pointer outline-none">
+                    <option value="all">All Logs</option>
+                </select>
+            </div>
+            <div class="max-h-[300px] overflow-y-auto no-scrollbar p-2">
+                <ul id="logList" class="space-y-1"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 z-50 hidden flex items-end md:items-center justify-center">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeSettings()"></div>
+        <div class="relative bg-white dark:bg-slate-900 w-full md:w-[400px] rounded-t-[2.5rem] md:rounded-[2.5rem] p-6 shadow-2xl animate-[slideUp_0.3s_ease-out] border-t border-slate-100 dark:border-slate-800">
+            <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6"></div>
+            
+            <div class="flex justify-between items-center mb-6 px-2">
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white">Settings</h3>
+                <button onclick="toggleDarkMode()" class="bg-slate-100 dark:bg-slate-800 p-2 rounded-full transition-colors flex items-center gap-2 px-4 border border-slate-200 dark:border-slate-700">
+                    <i id="darkModeIcon" class="fa-solid fa-moon text-slate-500 dark:text-yellow-400"></i>
+                    <span id="darkModeText" class="text-xs font-bold text-slate-600 dark:text-slate-300">Dark Mode</span>
+                </button>
+            </div>
+
+            <div class="space-y-5">
+                <!-- Theme Selector -->
+                <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <label class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-3 block">Theme Color</label>
+                    <div class="flex justify-between px-2">
+                        <button onclick="setTheme('red')" class="w-10 h-10 rounded-full bg-red-600 ring-2 ring-offset-2 ring-transparent hover:scale-110 transition focus:ring-red-300 dark:focus:ring-red-900"></button>
+                        <button onclick="setTheme('blue')" class="w-10 h-10 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-transparent hover:scale-110 transition focus:ring-blue-300 dark:focus:ring-blue-900"></button>
+                        <button onclick="setTheme('slate')" class="w-10 h-10 rounded-full bg-slate-800 ring-2 ring-offset-2 ring-transparent hover:scale-110 transition focus:ring-slate-300 dark:focus:ring-slate-700"></button>
+                        <button onclick="setTheme('orange')" class="w-10 h-10 rounded-full bg-orange-500 ring-2 ring-offset-2 ring-transparent hover:scale-110 transition focus:ring-orange-300 dark:focus:ring-orange-900"></button>
+                        <button onclick="setTheme('teal')" class="w-10 h-10 rounded-full bg-teal-600 ring-2 ring-offset-2 ring-transparent hover:scale-110 transition focus:ring-teal-300 dark:focus:ring-teal-900"></button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <label class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-2 block">Bike Name</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="settingsTitleInput" class="flex-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm font-bold text-slate-700 dark:text-white outline-none focus:border-red-500 dark:focus:border-red-500 transition">
+                        <button onclick="saveTitleSettings()" class="bg-slate-800 dark:bg-white text-white dark:text-slate-900 px-4 rounded-xl text-xs font-bold hover:bg-slate-900 dark:hover:bg-slate-200">Save</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="exportData()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl flex flex-col items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:scale-95 transition">
+                        <i class="fa-solid fa-download text-blue-500 text-xl"></i>
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Backup Data</span>
+                    </button>
+                    <button onclick="document.getElementById('importInput').click()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl flex flex-col items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 active:scale-95 transition">
+                        <i class="fa-solid fa-upload text-green-500 text-xl"></i>
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Restore Data</span>
+                    </button>
+                </div>
+
+                <button id="btnResetData" onclick="resetData()" class="w-full bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 mt-4 hover:bg-red-100 dark:hover:bg-red-900/30 transition border border-red-100 dark:border-red-900/30">
+                    <i class="fa-solid fa-trash"></i> Reset App Data
+                </button>
+                <input type="file" id="importInput" class="hidden" accept=".json" onchange="importData(this)">
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Data Modal (Fallback) -->
+    <div id="exportModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" onclick="closeExportModal()"></div>
+        <div class="relative bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2rem] p-6 shadow-2xl animate-[slideUp_0.3s_ease-out] border border-slate-100 dark:border-slate-800">
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Backup Data</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Copy this code and save it to a notes app or email.</p>
+            
+            <textarea id="exportText" readonly class="w-full h-32 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs font-mono text-slate-600 dark:text-slate-300 mb-4 focus:outline-none resize-none" onclick="this.select()"></textarea>
+            
+            <div class="flex gap-3">
+                <button onclick="closeExportModal()" class="flex-1 py-3 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition">Close</button>
+                <button onclick="copyExportText()" class="flex-[2] py-3 rounded-xl text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Update Modal -->
+    <div id="serviceModal" class="fixed inset-0 z-50 hidden flex items-end md:items-center justify-center">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
+        <div class="relative bg-white dark:bg-slate-900 w-full md:w-[400px] rounded-t-[2.5rem] md:rounded-[2.5rem] p-6 shadow-2xl animate-[slideUp_0.3s_ease-out]">
+            <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6"></div>
+            <div class="flex items-start justify-between mb-6">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white" id="modalTitle">Service</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1" id="modalDesc">Details</p>
+                </div>
+                <div id="modalIconContainer" class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xl text-slate-600 dark:text-slate-300">
+                    <i id="modalIcon" class="fa-solid fa-wrench"></i>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Interval (km)</label>
+                    <input type="number" id="modalInterval" class="w-full bg-transparent font-bold text-slate-800 dark:text-white outline-none text-lg" inputmode="numeric">
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <label class="block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1">Last Service</label>
+                    <input type="number" id="modalLastService" class="w-full bg-transparent font-bold text-slate-800 dark:text-white outline-none text-lg" inputmode="numeric">
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="updateSettingsOnly()" class="flex-1 py-4 rounded-2xl text-sm font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition active:scale-95">Save</button>
+                <button id="modalPrimaryBtn" onclick="saveServiceRecord()" class="flex-[2] py-4 rounded-2xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 transition flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-check"></i>
+                    <span>Mark Done</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Install Help Modal -->
+    <div id="installModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md transition-opacity" onclick="closeInstallModal()"></div>
+        <div class="relative bg-white dark:bg-slate-900 w-full max-w-sm rounded-[2rem] p-8 shadow-2xl animate-[slideUp_0.3s_ease-out] text-center border border-slate-100 dark:border-slate-800">
+            <div id="installIconContainer" class="w-20 h-20 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Install App</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">For the best experience, add this tracker to your home screen.</p>
+            <div id="installActions" class="space-y-4">
+                <div id="localFileWarning" class="hidden bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 p-4 rounded-2xl text-sm border border-orange-100 dark:border-orange-800 text-left">
+                    <p class="font-bold flex items-center gap-2 mb-2"><i class="fa-solid fa-triangle-exclamation"></i> Security Notice</p>
+                    <p class="text-xs opacity-90">Browsers block installation for local files. To install properly, please <b>Bookmark</b> this page instead.</p>
+                </div>
+                <button id="nativeInstallBtn" onclick="triggerNativeInstall()" class="hidden w-full py-4 rounded-2xl font-bold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-200 transition flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-download"></i> Install Now
+                </button>
+                <div id="manualInstructions" class="hidden text-left bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center shrink-0 font-bold text-slate-700 dark:text-white">1</div>
+                        <div class="text-sm text-slate-600 dark:text-slate-300 pt-1">Tap the <b>Menu / Share</b> button in your browser.</div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 flex items-center justify-center shrink-0 font-bold text-slate-700 dark:text-white">2</div>
+                        <div class="text-sm text-slate-600 dark:text-slate-300 pt-1">Select <b>"Add to Home Screen"</b> from the list.</div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="closeInstallModal()" class="mt-8 text-sm font-bold text-slate-400 hover:text-slate-600 transition">Maybe Later</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Theme Configuration ---
+        const themes = {
+            red: { header: 'bg-red-700', circle1: 'bg-red-600', circle2: 'bg-red-800', badge: 'text-red-100 bg-red-800/30', dashStrip: 'from-red-500 via-red-600 to-red-500', primaryBtn: 'bg-red-600 hover:bg-red-700 shadow-red-200', installIcon: 'bg-red-50 text-red-600', metaColor: '#b91c1c' },
+            blue: { header: 'bg-blue-600', circle1: 'bg-blue-500', circle2: 'bg-blue-700', badge: 'text-blue-100 bg-blue-700/30', dashStrip: 'from-blue-400 via-blue-500 to-blue-400', primaryBtn: 'bg-blue-600 hover:bg-blue-700 shadow-blue-200', installIcon: 'bg-blue-50 text-blue-600', metaColor: '#2563eb' },
+            slate: { header: 'bg-slate-800', circle1: 'bg-slate-700', circle2: 'bg-slate-900', badge: 'text-slate-100 bg-slate-700/50', dashStrip: 'from-slate-600 via-slate-700 to-slate-600', primaryBtn: 'bg-slate-800 hover:bg-slate-900 shadow-slate-200', installIcon: 'bg-slate-100 text-slate-800', metaColor: '#1e293b' },
+            orange: { header: 'bg-orange-500', circle1: 'bg-orange-400', circle2: 'bg-orange-600', badge: 'text-orange-50 bg-orange-600/30', dashStrip: 'from-orange-400 via-orange-500 to-orange-400', primaryBtn: 'bg-orange-500 hover:bg-orange-600 shadow-orange-200', installIcon: 'bg-orange-50 text-orange-600', metaColor: '#f97316' },
+            teal: { header: 'bg-teal-600', circle1: 'bg-teal-500', circle2: 'bg-teal-700', badge: 'text-teal-50 bg-teal-700/30', dashStrip: 'from-teal-400 via-teal-500 to-teal-400', primaryBtn: 'bg-teal-600 hover:bg-teal-700 shadow-teal-200', installIcon: 'bg-teal-50 text-teal-600', metaColor: '#0d9488' }
+        };
+
+        const defaultItems = [
+            { id: 'engine_oil', name: 'Engine Oil', interval: 1500, lastServiced: 0, icon: 'fa-oil-can' },
+            { id: 'gear_oil', name: 'Gear Oil', interval: 3000, lastServiced: 0, icon: 'fa-cogs' },
+            { id: 'cvt_clean', name: 'CVT Clean', interval: 4000, lastServiced: 0, icon: 'fa-fan' },
+            { id: 'air_filter', name: 'Air Filter', interval: 8000, lastServiced: 0, icon: 'fa-wind' },
+            { id: 'spark_plug', name: 'Spark Plug', interval: 10000, lastServiced: 0, icon: 'fa-bolt' },
+            { id: 'brake_fluid', name: 'Brake Fluid', interval: 12000, lastServiced: 0, icon: 'fa-droplet' },
+            { id: 'coolant', name: 'Coolant', interval: 12000, lastServiced: 0, icon: 'fa-snowflake' },
+            { id: 'drive_belt', name: 'Drive Belt', interval: 15000, lastServiced: 0, icon: 'fa-ring' }
+        ];
+
+        let appData = {
+            title: "My Click 125",
+            currentOdo: 0,
+            items: JSON.parse(JSON.stringify(defaultItems)),
+            logs: [],
+            theme: 'red',
+            darkMode: false
+        };
+
+        function init() {
+            loadData();
+            setupUI();
+            applyTheme(appData.theme || 'red');
+            applyDarkMode(appData.darkMode);
+            
+            const odoInput = document.getElementById('currentOdo');
+            odoInput.removeEventListener('input', handleOdoInput); 
+            odoInput.addEventListener('input', handleOdoInput);
+        }
+
+        function handleOdoInput(e) {
+            appData.currentOdo = parseInt(e.target.value) || 0;
+            saveData();
+            renderAll();
+        }
+
+        function loadData() {
+            const savedData = localStorage.getItem('hondaClickPMS_v2'); 
+            if (savedData) {
+                appData = JSON.parse(savedData);
+            } else {
+                const oldData = localStorage.getItem('hondaClickPMS');
+                if (oldData) {
+                    appData = JSON.parse(oldData);
+                    if (!appData.title) appData.title = "My Click 125";
+                    if (!appData.items) appData.items = JSON.parse(JSON.stringify(defaultItems));
+                    saveData();
+                }
+            }
+            if (!appData.title) appData.title = "My Click 125";
+            if (!appData.theme) appData.theme = "red";
+            if (typeof appData.darkMode === 'undefined') appData.darkMode = false;
+        }
+
+        function setTheme(color) {
+            appData.theme = color;
+            saveData();
+            applyTheme(color);
+        }
+
+        function toggleDarkMode() {
+            appData.darkMode = !appData.darkMode;
+            saveData();
+            applyDarkMode(appData.darkMode);
+        }
+
+        function applyDarkMode(isDark) {
+            const html = document.documentElement;
+            const icon = document.getElementById('darkModeIcon');
+            const text = document.getElementById('darkModeText');
+            
+            if (isDark) {
+                html.classList.add('dark');
+                icon.className = "fa-solid fa-sun text-yellow-400";
+                text.innerText = "Light Mode";
+            } else {
+                html.classList.remove('dark');
+                icon.className = "fa-solid fa-moon text-slate-500";
+                text.innerText = "Dark Mode";
+            }
+        }
+
+        function applyTheme(color) {
+            const t = themes[color] || themes.red;
+            
+            document.getElementById('headerContainer').className = `relative h-64 rounded-b-[3rem] shadow-xl overflow-hidden pt-safe-top z-0 transition-colors duration-500 ${t.header}`;
+            document.getElementById('headerCircle1').className = `absolute top-[-20%] right-[-10%] w-64 h-64 rounded-full opacity-50 blur-3xl transition-colors duration-500 ${t.circle1}`;
+            document.getElementById('headerCircle2').className = `absolute bottom-[10%] left-[-10%] w-48 h-48 rounded-full opacity-50 blur-2xl transition-colors duration-500 ${t.circle2}`;
+            document.getElementById('headerBadge').className = `flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-full w-fit mt-1 backdrop-blur-sm transition-colors duration-500 ${t.badge}`;
+            document.getElementById('dashStrip').className = `absolute top-0 left-0 w-full h-1 bg-gradient-to-r transition-colors duration-500 ${t.dashStrip}`;
+            document.getElementById('installIconContainer').className = `w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-sm ${t.installIcon}`;
+            
+            const nativeInstallBtn = document.getElementById('nativeInstallBtn');
+            if(nativeInstallBtn) nativeInstallBtn.className = `hidden w-full py-4 rounded-2xl font-bold text-white shadow-lg transition flex items-center justify-center gap-2 active:scale-95 ${t.primaryBtn}`;
+            
+            const modalPrimaryBtn = document.getElementById('modalPrimaryBtn');
+            if(modalPrimaryBtn) modalPrimaryBtn.className = `flex-[2] py-4 rounded-2xl text-sm font-bold text-white shadow-lg transition flex items-center justify-center gap-2 active:scale-95 ${t.primaryBtn}`;
+
+            document.getElementById('metaThemeColor').setAttribute('content', t.metaColor);
+        }
+
+        function setupUI() {
+            const filterSelect = document.getElementById('logFilter');
+            while (filterSelect.options.length > 1) filterSelect.remove(1);
+            appData.items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item.id;
+                opt.textContent = item.name;
+                filterSelect.appendChild(opt);
+            });
+
+            document.getElementById('displayTitle').innerText = appData.title;
+            document.getElementById('currentOdo').value = appData.currentOdo || '';
+            renderAll();
+        }
+
+        function renderAll() {
+            renderGrid();
+            renderLogs();
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            const oilItem = appData.items.find(i => i.id === 'engine_oil');
+            if (oilItem) {
+                const dueAt = oilItem.lastServiced + oilItem.interval;
+                document.getElementById('dashNextOil').innerText = dueAt.toLocaleString() + ' km';
+            }
+            document.getElementById('dashCount').innerText = appData.logs ? appData.logs.length : 0;
+
+            // DYNAMIC HEALTH LOGIC
+            let dueCount = 0;
+            let warningCount = 0;
+
+            appData.items.forEach(item => {
+                const dist = appData.currentOdo - item.lastServiced;
+                const percent = (dist / item.interval) * 100;
+                if (percent >= 100) dueCount++;
+                else if (percent >= 80) warningCount++;
+            });
+
+            let healthStatus = "Good";
+            let healthColor = "text-green-600 dark:text-green-400";
+
+            if (dueCount >= 6) {
+                healthStatus = "Critical";
+                healthColor = "text-red-600 dark:text-red-400 animate-pulse";
+            } else if (dueCount >= 4) {
+                healthStatus = "Check";
+                healthColor = "text-orange-500 dark:text-orange-400";
+            } else if (dueCount > 0) {
+                healthStatus = "Action";
+                healthColor = "text-yellow-500 dark:text-yellow-400";
+            } else if (warningCount > 0) {
+                healthStatus = "Soon";
+                healthColor = "text-yellow-500 dark:text-yellow-400";
+            }
+
+            const healthEl = document.getElementById('dashHealth');
+            healthEl.innerText = healthStatus;
+            healthEl.className = `text-xs font-bold ${healthColor}`;
+        }
+
+        let isFiltered = false;
+        function toggleHealthFilter() {
+            isFiltered = !isFiltered;
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('pmsGrid');
+            const gridTitle = document.getElementById('gridTitle');
+            grid.innerHTML = '';
+
+            let shownCount = 0;
+
+            appData.items.forEach(item => {
+                const distanceRun = appData.currentOdo - item.lastServiced;
+                const percent = Math.min(100, Math.max(0, (distanceRun / item.interval) * 100));
+                
+                if (isFiltered && percent < 80) return;
+
+                shownCount++;
+                const nextDue = item.lastServiced + item.interval;
+                
+                let colorClass = 'text-green-500 dark:text-green-400';
+                let bgClass = 'bg-green-50 dark:bg-green-900/20';
+                let statusText = 'Good';
+                let progressColor = 'bg-green-500';
+
+                if (percent >= 100) {
+                    colorClass = 'text-red-500 dark:text-red-400';
+                    bgClass = 'bg-red-50 dark:bg-red-900/20';
+                    statusText = 'Due Now';
+                    progressColor = 'bg-red-500';
+                } else if (percent >= 80) {
+                    colorClass = 'text-yellow-500 dark:text-yellow-400';
+                    bgClass = 'bg-yellow-50 dark:bg-yellow-900/20';
+                    statusText = 'Soon';
+                    progressColor = 'bg-yellow-500';
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-md transition cursor-pointer active:scale-95 group slide-up";
+                card.onclick = () => openModal(item.id);
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="w-10 h-10 rounded-2xl ${bgClass} ${colorClass} flex items-center justify-center text-lg transition-colors group-hover:scale-110 duration-300">
+                            <i class="fa-solid ${item.icon}"></i>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-1 rounded-full ${bgClass} ${colorClass}">${statusText}</span>
+                    </div>
+                    <div class="mb-3">
+                        <h3 class="font-bold text-slate-800 dark:text-white text-sm mb-0.5">${item.name}</h3>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Due: <span class="text-slate-600 dark:text-slate-400">${nextDue.toLocaleString()} km</span></p>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div class="h-full ${progressColor} transition-all duration-500 rounded-full" style="width: ${percent}%"></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            if (isFiltered) {
+                if (shownCount === 0) {
+                    grid.innerHTML = '<div class="col-span-2 text-center py-8 text-slate-400 text-sm italic">All systems good! No items due.</div>';
+                }
+                gridTitle.innerText = "Items Requiring Attention";
+            } else {
+                gridTitle.innerText = "Parts Health";
+            }
+        }
+
+        function renderLogs() {
+            const list = document.getElementById('logList');
+            const filterValue = document.getElementById('logFilter').value;
+            list.innerHTML = '';
+            
+            if (!appData.logs || appData.logs.length === 0) {
+                list.innerHTML = '<li class="p-8 text-center text-xs text-slate-400 dark:text-slate-500 italic">No service history yet.</li>';
+                return;
+            }
+
+            let displayLogs = appData.logs;
+            if (filterValue !== 'all') {
+                displayLogs = displayLogs.filter(log => log.itemId === filterValue);
+            }
+
+            let sortedLogs = displayLogs.slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (sortedLogs.length === 0) {
+                list.innerHTML = '<li class="p-8 text-center text-xs text-slate-400 dark:text-slate-500 italic">No records found.</li>';
+                return;
+            }
+
+            sortedLogs.forEach(log => {
+                const li = document.createElement('li');
+                li.className = 'group flex items-center p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition relative pl-4';
+                li.innerHTML = `
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-slate-200 dark:bg-slate-700 rounded-r-full group-hover:bg-red-400 transition-colors"></div>
+                    <div class="flex-1">
+                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 block">${log.itemName}</span>
+                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">${new Date(log.date).toLocaleDateString()}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg">${log.odo.toLocaleString()} km</span>
+                        <button onclick="deleteLog(${log.id})" class="text-slate-300 dark:text-slate-600 hover:text-red-500 transition px-2">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        let currentEditingId = null;
+
+        function openModal(id) {
+            currentEditingId = id;
+            const item = appData.items.find(i => i.id === id);
+            const distanceRun = appData.currentOdo - item.lastServiced;
+
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalDesc').innerText = `${Math.max(0, distanceRun).toLocaleString()} km used`;
+            document.getElementById('modalInterval').value = item.interval;
+            document.getElementById('modalLastService').value = item.lastServiced;
+            
+            const iconEl = document.getElementById('modalIcon');
+            iconEl.className = `fa-solid ${item.icon}`;
+            const container = document.getElementById('modalIconContainer');
+            container.className = "w-12 h-12 rounded-2xl flex items-center justify-center text-xl transition-colors bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400";
+
+            const modal = document.getElementById('serviceModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('serviceModal').classList.add('hidden');
+            currentEditingId = null;
+        }
+
+        function openSettings() {
+            document.getElementById('settingsTitleInput').value = appData.title;
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveTitleSettings() {
+            appData.title = document.getElementById('settingsTitleInput').value;
+            document.getElementById('displayTitle').innerText = appData.title;
+            saveData();
+            closeSettings();
+        }
+
+        function saveServiceRecord() {
+            if (!currentEditingId) return;
+            const idx = appData.items.findIndex(i => i.id === currentEditingId);
+            const item = appData.items[idx];
+            
+            const inputLastService = parseInt(document.getElementById('modalLastService').value);
+            let newLastService = appData.currentOdo;
+            
+            if (inputLastService !== item.lastServiced && inputLastService <= appData.currentOdo) {
+                newLastService = inputLastService;
+            }
+
+            appData.items[idx].lastServiced = newLastService;
+            appData.items[idx].interval = parseInt(document.getElementById('modalInterval').value);
+
+            if (!appData.logs) appData.logs = [];
+            appData.logs.push({
+                id: Date.now(), 
+                itemId: item.id, 
+                itemName: item.name, 
+                date: new Date().toISOString(), 
+                odo: newLastService 
+            });
+
+            saveData();
+            renderAll();
+            closeModal();
+        }
+
+        function updateSettingsOnly() {
+            if (!currentEditingId) return;
+            const idx = appData.items.findIndex(i => i.id === currentEditingId);
+            
+            appData.items[idx].interval = parseInt(document.getElementById('modalInterval').value);
+            appData.items[idx].lastServiced = parseInt(document.getElementById('modalLastService').value);
+
+            saveData();
+            renderAll();
+            closeModal();
+        }
+
+        function deleteLog(id) {
+            if(confirm('Delete record?')) {
+                appData.logs = appData.logs.filter(l => l.id !== id);
+                saveData();
+                renderLogs();
+                updateDashboard();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('hondaClickPMS_v2', JSON.stringify(appData));
+        }
+
+        function resetData() {
+            if(confirm("Are you sure? This will wipe all data.")) {
+                localStorage.removeItem('hondaClickPMS_v2');
+                localStorage.removeItem('hondaClickPMS');
+                appData = {
+                    title: "My Click 125",
+                    currentOdo: 0,
+                    items: JSON.parse(JSON.stringify(defaultItems)),
+                    logs: [],
+                    theme: 'red',
+                    darkMode: false
+                };
+                document.getElementById('currentOdo').value = '';
+                document.getElementById('displayTitle').innerText = appData.title;
+                document.getElementById('settingsTitleInput').value = appData.title;
+                applyTheme('red');
+                applyDarkMode(false);
+                renderAll();
+                closeSettings();
+                alert("Reset Complete");
+            }
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            
+            // Check if local file or shared logic
+            if (window.location.protocol === 'file:' || window.location.protocol === 'content:') {
+                openExportModal(dataStr);
+                return;
+            }
+
+            const fileName = `click125_backup_${new Date().toISOString().slice(0,10)}.json`;
+            const file = new File([dataStr], fileName, { type: "text/plain" });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    navigator.share({
+                        files: [file],
+                        title: 'Honda Click Backup',
+                        text: 'Maintenance logs backup file.'
+                    });
+                    return; 
+                } catch (error) {
+                    // Fallback to download if share cancelled/failed
+                }
+            }
+
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function openExportModal(data) {
+            document.getElementById('exportText').value = data;
+            document.getElementById('exportModal').classList.remove('hidden');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.add('hidden');
+        }
+
+        function copyExportText() {
+            const copyText = document.getElementById("exportText");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("Copied to clipboard!");
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.items && Array.isArray(imported.items)) {
+                        if(confirm("Restore data? Current data will be replaced.")) {
+                            appData = imported;
+                            saveData();
+                            document.getElementById('displayTitle').innerText = appData.title || "My Click 125";
+                            document.getElementById('currentOdo').value = appData.currentOdo || '';
+                            document.getElementById('settingsTitleInput').value = appData.title || "My Click 125";
+                            applyTheme(appData.theme || 'red');
+                            applyDarkMode(appData.darkMode || false);
+                            renderAll();
+                            closeSettings();
+                            alert("Data Restored Successfully");
+                        }
+                    } else { alert("Invalid file."); }
+                } catch (err) { alert("Error reading file."); }
+            };
+            reader.readAsText(file);
+            input.value = ''; 
+        }
+
+        function openInstallModal() {
+            const modal = document.getElementById('installModal');
+            const btn = document.getElementById('nativeInstallBtn');
+            const manual = document.getElementById('manualInstructions');
+            const warn = document.getElementById('localFileWarning');
+            
+            modal.classList.remove('hidden');
+            btn.classList.add('hidden');
+            manual.classList.add('hidden');
+            warn.classList.add('hidden');
+
+            if (isLocal) {
+                warn.classList.remove('hidden');
+            } else if (deferredPrompt) {
+                btn.classList.remove('hidden');
+            } else {
+                manual.classList.remove('hidden');
+            }
+        }
+
+        function closeInstallModal() {
+            document.getElementById('installModal').classList.add('hidden');
+        }
+
+        function triggerNativeInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; closeInstallModal(); });
+            }
+        }
+
+        function toggleSection(contentId, arrowId) {
+            const content = document.getElementById(contentId);
+            const arrow = document.getElementById(arrowId);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.classList.add('rotate-90');
+            } else {
+                content.classList.add('hidden');
+                arrow.classList.remove('rotate-90');
+            }
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
